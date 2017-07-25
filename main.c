@@ -311,13 +311,13 @@ int main(void){
   file=fopen("pacman.bin", "rb");
   uint32_t filesize=0;
   printf("z80 disassembler\nRobson Couto 2017\n");
+  if(file==NULL){
+    printf("\nFile not found\n");
+    return 0;
+  }
   fseek(file, 0, SEEK_END);
   filesize=ftell(file);
 
-  if(filesize==0){
-    printf("File not found");
-    return 0;
-  }
   printf("File size:%d\n",filesize );
   uint8_t *buffer = (uint8_t *) malloc(filesize);
   fseek(file, 0, SEEK_SET);
