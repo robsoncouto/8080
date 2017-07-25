@@ -19,7 +19,7 @@ uint8_t disassemble(uint8_t *buffer, uint32_t pc){
     case 0x05: printf("\tDCR B"); break;
     case 0x06: printf("\tMVI B, #%02x", buffer[pc+1]); inst_bytes=2; break;
     case 0x07: printf("\tRLC"); break;
-    case 0x08: printf("\tNOP"); break;
+    case 0x08: printf("\tNOP ;alternative"); break;
     case 0x09: printf("\tDAD B"); break;
     case 0x0A: printf("\tLDAX B"); break;
     case 0x0B: printf("\tDCX B"); break;
@@ -28,7 +28,7 @@ uint8_t disassemble(uint8_t *buffer, uint32_t pc){
     case 0x0E: printf("\tMVI C, #%02x",buffer[pc+1]); inst_bytes=2; break;
     case 0x0F: printf("\tRRC"); break;
 
-    case 0x10: printf("\tNOP"); break;
+    case 0x10: printf("\tNOP ;alternative"); break;
     case 0x11: printf("\tLXI D, #%02x%02x ",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0x12: printf("\tSTAX D"); break;
     case 0x13: printf("\tINX D"); break;
@@ -36,7 +36,7 @@ uint8_t disassemble(uint8_t *buffer, uint32_t pc){
     case 0x15: printf("\tDCR D"); break;
     case 0x16: printf("\tMVI D, #%02x", buffer[pc+1]); inst_bytes=2; break;
     case 0x17: printf("\tRAL"); break;
-    case 0x18: printf("\tNOP"); break;
+    case 0x18: printf("\tNOP ;alternative"); break;
     case 0x19: printf("\tDAD D"); break;
     case 0x1A: printf("\tLDAX D"); break;
     case 0x1B: printf("\tDCX D"); break;
@@ -45,15 +45,15 @@ uint8_t disassemble(uint8_t *buffer, uint32_t pc){
     case 0x1E: printf("\tMVI E, #%02x",buffer[pc+1]); inst_bytes=2; break;
     case 0x1F: printf("\tRAR"); break;
 
-    case 0x20: printf("\tNOP"); break;
+    case 0x20: printf("\tNOP alternative"); break;
     case 0x21: printf("\tLXI H, #%02x%02x ",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
-    case 0x22: printf("\tSHLP B, #%02x%02x ",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
+    case 0x22: printf("\tSHLP #%02x%02x ",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0x23: printf("\tINX H"); break;
     case 0x24: printf("\tINR H"); break;
     case 0x25: printf("\tDCR H"); break;
     case 0x26: printf("\tMVI H, #%02x", buffer[pc+1]); inst_bytes=2; break;
     case 0x27: printf("\tDAA"); break;
-    case 0x28: printf("\tNOP"); break;
+    case 0x28: printf("\tNOP ;alternative"); break;
     case 0x29: printf("\tDAD H"); break;
     case 0x2A: printf("\tLHLD , #%02x%02x ",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;///////////////////
     case 0x2B: printf("\tDCX H"); break;
@@ -62,15 +62,15 @@ uint8_t disassemble(uint8_t *buffer, uint32_t pc){
     case 0x2E: printf("\tMVI L, #%02x",buffer[pc+1]); inst_bytes=2; break;
     case 0x2F: printf("\tCMA"); break;
 
-    case 0x30: printf("\tNOP"); break;
+    case 0x30: printf("\tNOP ;alternative"); break;
     case 0x31: printf("\tLXI SP, #%02x%02x ",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
-    case 0x32: printf("\tSTA D, #%02x%02x ",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
+    case 0x32: printf("\tSTA #%02x%02x ",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0x33: printf("\tINX SP"); break;
     case 0x34: printf("\tINR M"); break;
     case 0x35: printf("\tDCR M"); break;
     case 0x36: printf("\tMVI M, #%02x", buffer[pc+1]); inst_bytes=2; break;
     case 0x37: printf("\tSTC"); break;
-    case 0x38: printf("\tNOP"); break;
+    case 0x38: printf("\tNOP ;alternative"); break;
     case 0x39: printf("\tDAD SP"); break;
     case 0x3A: printf("\tLDA #%02x%02x ",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0x3B: printf("\tDCX SP"); break;
@@ -226,7 +226,7 @@ uint8_t disassemble(uint8_t *buffer, uint32_t pc){
     case 0xC8: printf("\tRZ"); break;
     case 0xC9: printf("\tRET"); break;
     case 0xCA: printf("\tJZ, #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
-    case 0xCB: printf("\tJMP, #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3;break;// BITS GO HERE
+    case 0xCB: printf("\tJMP, #%02x%02x ;alternative",buffer[pc+2], buffer[pc+1]); inst_bytes=3;break;// BITS GO HERE
     case 0xCC: printf("\tCZ, #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0xCD: printf("\tCALL #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0xCE: printf("\tACI #%02x",buffer[pc+1]); inst_bytes=2; break;
@@ -241,11 +241,11 @@ uint8_t disassemble(uint8_t *buffer, uint32_t pc){
     case 0xD6: printf("\tSUI #%02x",buffer[pc+1]); inst_bytes=2; break;
     case 0xD7: printf("\tRST 2h"); break;
     case 0xD8: printf("\tRC"); break;
-    case 0xD9: printf("\tRET ;*"); break;
+    case 0xD9: printf("\tRET ;alternative"); break;
     case 0xDA: printf("\tJC #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0xDB: printf("\tIN #%02x",buffer[pc+1]); inst_bytes=2; break;
     case 0xDC: printf("\tCC #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
-    case 0xDD: printf("\tCALL #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
+    case 0xDD: printf("\tCALL #%02x%02x ;alternative",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0xDE: printf("\tSBI #%02x",buffer[pc+1]); inst_bytes=2; break;
     case 0xDF: printf("\tRST 3"); break;
 
@@ -262,7 +262,7 @@ uint8_t disassemble(uint8_t *buffer, uint32_t pc){
     case 0xEA: printf("\tJPE #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0xEB: printf("\tXCHG"); break;
     case 0xEC: printf("\tCPE #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
-    case 0xED: printf("\tCALL #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
+    case 0xED: printf("\tCALL #%02x%02x ;alternative",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0xEE: printf("\tXRI #%02x",buffer[pc+1]); inst_bytes=2; break;
     case 0xEF: printf("\tRST 5"); break;
 
@@ -279,7 +279,7 @@ uint8_t disassemble(uint8_t *buffer, uint32_t pc){
     case 0xFA: printf("\tJM #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0xFB: printf("\tEI");
     case 0xFC: printf("\tCM, #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
-    case 0xFD: printf("\tCALL #%02x%02x",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
+    case 0xFD: printf("\tCALL #%02x%02x ;alternative",buffer[pc+2], buffer[pc+1]); inst_bytes=3; break;
     case 0xFE: printf("\tCPI #%02x",buffer[pc+1]);inst_bytes=2; break;
     case 0xFF: printf("\tRST 7"); break;
   }
