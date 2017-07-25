@@ -295,22 +295,12 @@ void hexdump(uint8_t* buffer, uint32_t buffersize){
   }
   printf("\n");
 }
-int32_t check_file_size(FILE *fp){
-  uint8_t data;
-  uint32_t filesize=0;
-  if(fp){//if file opened sucessfully
-    fseek(fp, filesize, SEEK_SET);
-    while (fread(&data, 1, 1, fp)==1) {
-      filesize++;
-    }
-    return filesize;
-  }
-}
+
 int main(void){
   FILE *file;
-  file=fopen("pacman.bin", "rb");
+  file=fopen("invaders.bin", "rb");
   uint32_t filesize=0;
-  printf("z80 disassembler\nRobson Couto 2017\n");
+  printf("8080 disassembler\nRobson Couto 2017\n");
   if(file==NULL){
     printf("\nFile not found\n");
     return 0;
@@ -321,13 +311,12 @@ int main(void){
   printf("File size:%d\n",filesize );
   uint8_t *buffer = (uint8_t *) malloc(filesize);
   fseek(file, 0, SEEK_SET);
-  if (fread(buffer, 1, filesize, file)==filesize){
-    printf("Moved file to buffer:%d\n",filesize );
+  if (!fread(buffer, 1, filesize, file)==filesize){
+    printf("Problem moving %d bytes to buffer\n",filesize );
   }
-  //hexdump(buffer,filesize);
-  //printf("size of buffer %d ", strlen(buffer));
+
   uint32_t pc=0;
-  while (pc<=filesize) {
+  while (pc<filesize) {
     pc+= disassemble(buffer,pc);
   }
 
