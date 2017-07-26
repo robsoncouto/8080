@@ -37,24 +37,45 @@ void UnimplementedInstruction(State8080* state)
 
 int Emulate8080Op(State8080* state){
   unsigned char *opcode = &state->memory[state->pc];
+  state->pc+=1;
+  uint16_t result=0;
   switch(*opcode){
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x01: UnimplementedInstruction(state); break;
-      case 0x02: UnimplementedInstruction(state); break;
-      case 0x03: UnimplementedInstruction(state); break;
+      case 0x00: //NOP
+        break;
+      case 0x01:// LXI B, D16 - 3
+        state->c = opcode[1];
+        state->b = opcode[2];
+        state->pc += 2;
+        break;
+      case 0x02://STAX B
+        state->memory[((state->b)<<8)|((state->c))]=state->a;
+        break;
+      case 0x03://INX B
+        result=state->c+1;
+        if(result>0xFF){
+          state->c+=1;
+          state->b+=1;
+        }else{
+          state->c+=1;
+        }
+
+        break;
       case 0x04: UnimplementedInstruction(state); break;
       /*....*/
       case 0xfe: UnimplementedInstruction(state); break;
       case 0xff: UnimplementedInstruction(state); break;
   }
-  state->pc+=1;  //for the opcode
+  //state->pc+=1;  //for the opcode
 }
 
 int main(void){
+  State8080 curr_state;
+  curr_state.pc=0;
+
   FILE *file;
   file=fopen("invaders.bin", "rb");
   uint32_t filesize=0;
-  printf("8080 disassembler\nRobson Couto 2017\n");
+  printf("8080 emulator\nRobson Couto 2017\n");
   if(file==NULL){
     printf("\nFile not found\n");
     return 0;
@@ -68,10 +89,6 @@ int main(void){
   if (!fread(buffer, 1, filesize, file)==filesize){
     printf("Problem moving %d bytes to buffer\n",filesize );
   }
-  //
-  // uint32_t pc=0;
-  // while (pc<filesize) {
-  //   pc+= disassemble(buffer,pc);
-  // }
-
+  curr_state.memory=buffer;
+  Emulate8080Op(&curr_state);
 }
