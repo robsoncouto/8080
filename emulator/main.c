@@ -102,12 +102,28 @@ int Emulate8080Op(State8080* state){
       case 0x0B://DCX B
         result=(state->b)<<8)|((state->c));
         result--;
-        state->b=(uint8_t)result>>8;
         state->c=(uint8_t)result&0xFF;
+        state->b=(uint8_t)result>>8;
         break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
+      case 0x0C://INR C
+        result=state->c++;
+        state->c=(uint8_t)result;
+        state->cc.z = ((state->c & 0xff) == 0);
+        state->cc.s = ((state->c & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->c);
+        break;
+      case 0x0D://DCR C
+        result=state->c--;
+        state->c=(uint8_t)result;
+        state->cc.z = ((state->c & 0xff) == 0);
+        state->cc.s = ((state->c & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->c);
+        break;
+      case 0x0E:
+      
+        break;
       case 0x00: UnimplementedInstruction(state); break;
       case 0x00: UnimplementedInstruction(state); break;
       case 0x00: UnimplementedInstruction(state); break;
