@@ -694,6 +694,150 @@ int Emulate8080Op(State8080* state){
         //state->cc.ac =FIXME
         break;
 
+      case 0x90://
+        result=state->a-state->b;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x91:
+        result=state->a-state->c;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x92://
+        result=state->a-state->d;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x93://
+        result=state->a-state->e;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x94://
+        result=state->a-state->h;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x95://
+        result=state->a-state->l;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x96://
+        result=state->a-state->memory[(state->h<<8)|state->l];
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x97://
+        result=state->a-state->a;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x98://ADC
+        result=state->a-state->b-state->cc.cy;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x99://
+        result=state->a-state->c-state->cc.cy;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x9a://
+        result=state->a-state->d-state->cc.cy;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x9b://
+        result=state->a-state->e-state->cc.cy;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x9c://
+        result=state->a-state->h-state->cc.cy;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x9d://
+        result=state->a-state->l-state->cc.cy;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x9e://
+        result=state->a-state->memory[(state->h<<8)|state->l]-state->cc.cy;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0x9f://
+        result=state->a-state->a-state->cc.cy;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
 
       case 0xff: UnimplementedInstruction(state); break;
   }
