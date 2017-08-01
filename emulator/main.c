@@ -38,7 +38,7 @@ void UnimplementedInstruction(State8080* state)
 int Emulate8080Op(State8080* state){
   unsigned char *opcode = &state->memory[state->pc];
   state->pc+=1;
-  uint16_t result=0;
+  uint32_t result=0;
   switch(*opcode){
       case 0x00: //NOP
         break;
@@ -60,7 +60,7 @@ int Emulate8080Op(State8080* state){
         // }
         result=(state->b)<<8)|((state->c));
         result++;
-        state->c=(uint8_t)result<<8;
+        state->c=(uint8_t)result>>8;
         state->b=(uint8_t)result&0xFF;
 
         break;
@@ -92,7 +92,7 @@ int Emulate8080Op(State8080* state){
       case 0x09:// DAD B
         result=(state->b)<<8)|((state->c));
         result=(state->h)<<8)|((state->l));
-        if(result<BC)state->cc.cy=1;//result will wrap aorund
+        if(result>0xffff)state->cc.cy=1;
         state->h=(uint8_t)result>>8;
         state->l=(uint8_t)result&0xFF;
         break;
@@ -121,145 +121,176 @@ int Emulate8080Op(State8080* state){
         state->cc.cy = (result > 0xff);
         state->cc.p = ~(state->c);
         break;
-      case 0x0E:
-      
+      case 0x0E://MVI C, D8
+        state->c=opcode[1];
         break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
-      case 0x00: UnimplementedInstruction(state); break;
+      case 0x0F://RRC
+        result=state->a;
+        state->a=state->a>>1;
+        state->cc.cy = (result & 0x01);
+        state->a=state->a|(state->cc.cy<<7);
+        break;
+      case 0x10://NOT DOCUMENTED
+        break;
+      case 0x11://LXI D,D16
+        state->d=opcode[2]
+        state->e=opcode[1]
+        break;
+      case 0x12://STAX D;
+        memory[(state->d<<8)|(state->e&0xff)]=state->a;
+        break;
+      case 0x13://INX D
+        result=(state->d<<8)|(state->e&0xff)+1;
+        state->e=result&0xff;
+        state->d=result>>8;
+        break;
+      case 0x14://INR D
+        state->d++;
+        state->cc.z=(state->d&0xff);
+        state->cc.s=(state->d&0x10);
+        state->cc.p=~(state->d&0x01);
+        state->cc.ac=0;//FIXME
+        break;
+      case 0x15://DCR D
+        state->d--;
+        state->cc.z=(state->d&0xff);
+        state->cc.s=(state->d&0x10);
+        state->cc.p=~(state->d&0x01);
+        state->cc.ac=0;//FIXME
+        break;
+      case 0x16://MVI D, D8
+        state->d=opcode[1];
+        break;
+      case 0x17://RAL
+        result=state->a;
+        state->a=result<<1;
+        state->a=state->a|(state->cc.cy); //bit0 = prev cy
+        state->cc.cy = (result & 0x0100); //cy = prev bit7
+        break;
+      case 0x18://NOT DOCUMENTED
+        break;
+      case 0x19://DAD D
+        result=(state->d)<<8)|((state->e));
+        result=(state->h)<<8)|((state->l));
+        if(result>0xffff)state->cc.cy=1;
+        state->h=(uint8_t)result>>8;
+        state->l=(uint8_t)result&0xFF;
+        break;
+      case 0x1a://LDAX D
+        state->a=memory[(state->d)<<8)|((state->e))]
+        break;
+      case 0x1b://DCX D
+        result=(state->d)<<8)|((state->e))-1;
+        state->d=(uint8_t)result>>8;
+        state->e=(uint8_t)result&0xFF;
+        break;
+      case 0x1c:
+
+        break;
+
+
+      case 0x40://
+        state->b=state->b;
+        break;
+      case 0x41://
+        state->b=state->c;
+        break;
+      case 0x42://
+        state->b=state->d;
+        break;
+      case 0x43://
+        state->b=state->e;
+        break;
+      case 0x44://
+        state->b=state->h;
+        break;
+      case 0x45://
+        state->b=state->l;
+        break;
+      case 0x46://
+        state->b=memory[(state->h<<8)|(state->l)];
+        break;
+      case 0x47://
+        state->b=state->a;
+        break;
+      case 0x48://
+        state->c=state->b;
+        break;
+      case 0x49://
+        state->c=state->c;
+        break;
+      case 0x4a://
+        state->c=state->d;
+        break;
+        state->c=state->e;
+      case 0x4b://
+        break;
+      case 0x4c://
+        state->c=state->h;
+        break;
+      case 0x4d://
+        state->c=state->l;
+        break;
+      case 0x4e://
+        state->c=memory[(state->h<<8)|(state->l)];
+        break;
+      case 0x4f://
+        state->c=state->a;
+        break;
+
+      case 0x50://
+        state->d=state->b;
+        break;
+      case 0x51://
+        state->d=state->c;
+        break;
+      case 0x52://
+        state->d=state->d;
+        break;
+      case 0x53://
+        state->d=state->e;
+        break;
+      case 0x54://
+        state->d=state->h;
+        break;
+      case 0x55://
+        state->d=state->l;
+        break;
+      case 0x56://
+        state->d=memory[(state->h<<8)|(state->l)];
+        break;
+      case 0x57://
+        state->d=state->a;
+        break;
+      case 0x58://
+        state->e=state->b;
+        break;
+      case 0x59://
+        state->e=state->c;
+        break;
+      case 0x5a://
+        state->e=state->d;
+        break;
+      case 0x5b://
+        state->e=state->e;
+        break;
+      case 0x5c://
+        state->e=state->h;
+        break;
+      case 0x5d://
+        state->e=state->l;
+        break;
+      case 0x5e://
+        state->e=memory[(state->h<<8)|(state->l)];
+        break;
+      case 0x5f://
+        state->e=state->a;
+        break;
+
+
+
+      case 0x50://
+        break;
       case 0xff: UnimplementedInstruction(state); break;
   }
   //state->pc+=1;  //for the opcode
