@@ -58,7 +58,7 @@ int Emulate8080Op(State8080* state){
         // }else{
         //   state->c+=1;
         // }
-        result=(state->b)<<8)|((state->c));
+        result=(state->b<<8)|(state->c);
         result++;
         state->c=(uint8_t)result>>8;
         state->b=(uint8_t)result&0xFF;
@@ -90,17 +90,17 @@ int Emulate8080Op(State8080* state){
       case 0x08://illegal instruction
         break;
       case 0x09:// DAD B
-        result=(state->b)<<8)|((state->c));
-        result=(state->h)<<8)|((state->l));
+        result=(state->b<<8)|((state->c));
+        result+=(state->h<<8)|((state->l));
         if(result>0xffff)state->cc.cy=1;
         state->h=(uint8_t)result>>8;
         state->l=(uint8_t)result&0xFF;
         break;
       case 0x0A://LDAX B
-        state->a=memory[((state->b)<<8)|((state->c))];
+        state->a=state->memory[((state->b)<<8)|((state->c))];
         break;
       case 0x0B://DCX B
-        result=(state->b)<<8)|((state->c));
+        result=(state->b<<8)|((state->c));
         result--;
         state->c=(uint8_t)result&0xFF;
         state->b=(uint8_t)result>>8;
@@ -133,11 +133,11 @@ int Emulate8080Op(State8080* state){
       case 0x10://NOT DOCUMENTED
         break;
       case 0x11://LXI D,D16
-        state->d=opcode[2]
-        state->e=opcode[1]
+        state->d=opcode[2];
+        state->e=opcode[1];
         break;
       case 0x12://STAX D;
-        memory[(state->d<<8)|(state->e&0xff)]=state->a;
+        state->memory[(state->d<<8)|(state->e&0xff)]=state->a;
         break;
       case 0x13://INX D
         result=(state->d<<8)|(state->e&0xff)+1;
@@ -170,24 +170,189 @@ int Emulate8080Op(State8080* state){
       case 0x18://NOT DOCUMENTED
         break;
       case 0x19://DAD D
-        result=(state->d)<<8)|((state->e));
-        result=(state->h)<<8)|((state->l));
+        result=(state->d<<8)|((state->e));
+        result+=(state->h<<8)|((state->l));
         if(result>0xffff)state->cc.cy=1;
         state->h=(uint8_t)result>>8;
         state->l=(uint8_t)result&0xFF;
         break;
       case 0x1a://LDAX D
-        state->a=memory[(state->d)<<8)|((state->e))]
+        state->a=state->memory[(state->d<<8)|((state->e))];
         break;
       case 0x1b://DCX D
-        result=(state->d)<<8)|((state->e))-1;
+        result=(state->d<<8)|((state->e))-1;
         state->d=(uint8_t)result>>8;
         state->e=(uint8_t)result&0xFF;
         break;
-      case 0x1c:
-
+      case 0x1c://INR E
+        result=state->c++;
+        state->e=(uint8_t)result;
+        state->cc.z = ((state->e & 0xff) == 0);
+        state->cc.s = ((state->e & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->e);
+        break;
+      case 0x1d://DCR E
+        result=state->e--;
+        state->e=(uint8_t)result;
+        state->cc.z = ((state->e & 0xff) == 0);
+        state->cc.s = ((state->e & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->e);
+        break;
+      case 0x1e://MVI E, D8
+        state->e=opcode[1];
+        break;
+      case 0x1f://RAR
+        result=state->a;
+        state->a=state->a>>1;
+        state->cc.cy = (result & 0x01);
+        state->a=state->a|(result&(1<<7));
         break;
 
+
+      case 0x20://RIM
+        break;
+      case 0x21://LXI H,D16
+        state->h=opcode[2];
+        state->l=opcode[1];
+        break;
+      case 0x22://STAX H;
+        //FIXME
+        break;
+      case 0x23://INX H
+        result=(state->h<<8)|(state->l&0xff)+1;
+        state->h=result&0xff;
+        state->l=result>>8;
+        break;
+      case 0x24://INR H
+        state->h++;
+        state->cc.z=(state->h&0xff);
+        state->cc.s=(state->h&0x80);
+        state->cc.p=~(state->h&0x01);
+        state->cc.ac=0;//FIXME
+        break;
+      case 0x25://DCR H
+        state->h--;
+        state->cc.z=(state->h&0xff);
+        state->cc.s=(state->h&0x80);
+        state->cc.p=~(state->h&0x01);
+        state->cc.ac=0;//FIXME
+        break;
+      case 0x26://MVI H, D8
+        state->h=opcode[1];
+        break;
+      case 0x27://DAA
+        break;
+      case 0x28://NOT DOCUMENTED
+        break;
+      case 0x29://DAD H
+        result=(state->h<<8)|(state->l);//TODO check if HL or HI
+        result+=(state->h<<8)|(state->l);
+        if(result>0xffff)state->cc.cy=1;
+        state->h=(uint8_t)result>>8;
+        state->l=(uint8_t)result&0xFF;
+        break;
+      case 0x2a://LDLD H
+        state->h=state->memory[opcode[2]];
+        state->l=state->memory[opcode[1]];
+        break;
+      case 0x2b://DCX H
+        result=(state->d<<8)|((state->e))-1;
+        state->d=(uint8_t)result>>8;
+        state->e=(uint8_t)result&0xFF;
+        break;
+      case 0x2c://INR L
+        result=state->l++;
+        state->l=(uint8_t)result;
+        state->cc.z = ((state->l & 0xff) == 0);
+        state->cc.s = ((state->l & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->l);
+        break;
+      case 0x2d://DCR L
+        result=state->l--;
+        state->l=(uint8_t)result;
+        state->cc.z = ((state->l & 0xff) == 0);
+        state->cc.s = ((state->l & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->l);
+        break;
+      case 0x2e://MVI L, D8
+        state->l=opcode[1];
+        break;
+      case 0x2f://CMA
+        state->a=~state->a;
+        break;
+
+      case 0x30://SIM NOTE Special instruction
+        break;
+      case 0x31://LXI SP,D16
+        state->sp=(opcode[2]<<8)|opcode[1];
+        break;
+      case 0x32://STA ADR;
+        state->memory[(opcode[2]<<8)|opcode[1]]=state->a;
+        break;
+      case 0x33://INX SP
+        state->sp++;
+        break;
+      case 0x34://INR M
+        state->memory[(state->h<<8)|(state->l)]++;
+        state->cc.z=(state->memory[(state->h<<8)|(state->l)]&0xff);
+        state->cc.s=(state->memory[(state->h<<8)|(state->l)]&0x80);
+        state->cc.p=~(state->memory[(state->h<<8)|(state->l)]&0x01);
+        state->cc.ac=0;//FIXME
+        break;
+      case 0x35://DCR M
+        state->memory[(state->h<<8)|(state->l)]--;
+        state->cc.z=(state->memory[(state->h<<8)|(state->l)]&0xff);
+        state->cc.s=(state->memory[(state->h<<8)|(state->l)]&0x80);
+        state->cc.p=~(state->memory[(state->h<<8)|(state->l)]&0x01);
+        state->cc.ac=0;//FIXME
+        break;
+      case 0x36://MVI H, D8
+        state->memory[(state->h<<8)|(state->l)]=opcode[1];
+        break;
+      case 0x37://STC
+        state->cc.cy=1;
+        break;
+      case 0x38://NOT DOCUMENTED
+        break;
+      case 0x39://DAD SP
+        result=(state->h<<8)|((state->l));//TODO check if HL or HI
+        result+=state->sp;
+        if(result>0xffff)state->cc.cy=1;
+        state->h=(uint8_t)result>>8;
+        state->l=(uint8_t)result&0xFF;
+        break;
+      case 0x3a://LDA ADR
+        state->a=state->memory[(opcode[2]<<8)|opcode[1]];
+        break;
+      case 0x3b://DCX SP
+        state->sp++;
+        break;
+      case 0x3c://INR A
+        result=state->a++;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        break;
+      case 0x3d://DCR A
+        result=state->a--;
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        break;
+      case 0x3e://MVI L, D8
+        state->a=opcode[1];
+        break;
+      case 0x3f://CMC
+        state->cc.cy=~state->cc.cy;
+        break;
 
       case 0x40://
         state->b=state->b;
@@ -208,7 +373,7 @@ int Emulate8080Op(State8080* state){
         state->b=state->l;
         break;
       case 0x46://
-        state->b=memory[(state->h<<8)|(state->l)];
+        state->b=state->memory[(state->h<<8)|(state->l)];
         break;
       case 0x47://
         state->b=state->a;
@@ -222,8 +387,8 @@ int Emulate8080Op(State8080* state){
       case 0x4a://
         state->c=state->d;
         break;
-        state->c=state->e;
       case 0x4b://
+        state->c=state->e;
         break;
       case 0x4c://
         state->c=state->h;
@@ -232,7 +397,7 @@ int Emulate8080Op(State8080* state){
         state->c=state->l;
         break;
       case 0x4e://
-        state->c=memory[(state->h<<8)|(state->l)];
+        state->c=state->memory[(state->h<<8)|(state->l)];
         break;
       case 0x4f://
         state->c=state->a;
@@ -257,7 +422,7 @@ int Emulate8080Op(State8080* state){
         state->d=state->l;
         break;
       case 0x56://
-        state->d=memory[(state->h<<8)|(state->l)];
+        state->d=state->memory[(state->h<<8)|(state->l)];
         break;
       case 0x57://
         state->d=state->a;
@@ -281,7 +446,7 @@ int Emulate8080Op(State8080* state){
         state->e=state->l;
         break;
       case 0x5e://
-        state->e=memory[(state->h<<8)|(state->l)];
+        state->e=state->memory[(state->h<<8)|(state->l)];
         break;
       case 0x5f://
         state->e=state->a;
@@ -306,7 +471,7 @@ int Emulate8080Op(State8080* state){
         state->h=state->l;
         break;
       case 0x66://
-        state->h=memory[(state->h<<8)|(state->l)];
+        state->h=state->memory[(state->h<<8)|(state->l)];
         break;
       case 0x67://
         state->h=state->a;
@@ -330,34 +495,34 @@ int Emulate8080Op(State8080* state){
         state->l=state->l;
         break;
       case 0x6e://
-        state->l=memory[(state->h<<8)|(state->l)];
+        state->l=state->memory[(state->h<<8)|(state->l)];
         break;
       case 0x6f://
         state->l=state->a;
         break;
 
       case 0x70://
-        memory[(state->h<<8)|(state->l)]=state->b;
+        state->memory[(state->h<<8)|(state->l)]=state->b;
         break;
       case 0x71://
-        memory[(state->h<<8)|(state->l)]=state->c;
+        state->memory[(state->h<<8)|(state->l)]=state->c;
         break;
       case 0x72://
-        memory[(state->h<<8)|(state->l)]=state->d;
+        state->memory[(state->h<<8)|(state->l)]=state->d;
         break;
       case 0x73://
-        memory[(state->h<<8)|(state->l)]=state->e;
+        state->memory[(state->h<<8)|(state->l)]=state->e;
         break;
       case 0x74://
-        memory[(state->h<<8)|(state->l)]=state->h;
+        state->memory[(state->h<<8)|(state->l)]=state->h;
         break;
       case 0x75://
-        memory[(state->h<<8)|(state->l)]=state->l;
+        state->memory[(state->h<<8)|(state->l)]=state->l;
         break;
       case 0x76://HLT
         break;
       case 0x77://
-        memory[(state->h<<8)|(state->l)]=state->a;
+        state->memory[(state->h<<8)|(state->l)]=state->a;
         break;
       case 0x78://
         state->a=state->b;
@@ -378,14 +543,12 @@ int Emulate8080Op(State8080* state){
         state->a=state->l;
         break;
       case 0x7e://
-        state->a=memory[(state->h<<8)|(state->l)];
+        state->a=state->memory[(state->h<<8)|(state->l)];
         break;
       case 0x7f://
         state->a=state->a;
         break;
 
-      case 0x50://
-        break;
       case 0xff: UnimplementedInstruction(state); break;
   }
   //state->pc+=1;  //for the opcode
