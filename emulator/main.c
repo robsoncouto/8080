@@ -1059,62 +1059,61 @@ int Emulate8080Op(State8080* state){
       case 0xb8://
         result=state->a-state->b;
         //state->a=(uint8_t)result;
-        result=result & 0x000000ff;
-        state->cc.z = ((uint8_t)result & 0xff));
-        state->cc.s = ((uint8_t)result & 0x80) != 0);
+        state->cc.z = (((uint8_t)result & 0xff) == 0);
+        state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
         break;
       case 0xb9:
         result=state->a-state->c;
-        state->cc.z = ((uint8_t)result & 0xff) == 0);
-        state->cc.s = ((uint8_t)result & 0x80) != 0);
+        state->cc.z = (((uint8_t)result & 0xff) == 0);
+        state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         break;
       case 0xba://
         result=state->a-state->d;
-        state->cc.z = ((uint8_t)result & 0xff) == 0);
-        state->cc.s = ((uint8_t)result & 0x80) != 0);
+        state->cc.z = (((uint8_t)result & 0xff) == 0);
+        state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         break;
       case 0xbb://
         result=state->a-state->e;
-        state->cc.z = ((uint8_t)result & 0xff) == 0);
-        state->cc.s = ((uint8_t)result & 0x80) != 0);
+        state->cc.z = (((uint8_t)result & 0xff) == 0);
+        state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         break;
       case 0xbc://
         result=state->a-state->h;
-        state->cc.z = ((uint8_t)result & 0xff) == 0);
-        state->cc.s = ((uint8_t)result & 0x80) != 0);
+        state->cc.z = (((uint8_t)result & 0xff) == 0);
+        state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
         break;
       case 0xbd://
         result=state->a-state->l;
-        state->cc.z = ((uint8_t)result & 0xff) == 0);
-        state->cc.s = ((uint8_t)result & 0x80) != 0);
+        state->cc.z = (((uint8_t)result & 0xff) == 0);
+        state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
         break;
       case 0xbe://
         result=state->a-state->memory[(state->h<<8)|state->l];
-        state->cc.z = ((uint8_t)result & 0xff) == 0);
-        state->cc.s = ((uint8_t)result & 0x80) != 0);
+        state->cc.z = (((uint8_t)result & 0xff) == 0);
+        state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
         break;
       case 0xbf://
         result=state->a-state->a;
-        state->cc.z = ((uint8_t)result & 0xff) == 0);
-        state->cc.s = ((uint8_t)result & 0x80) != 0);
+        state->cc.z = (((uint8_t)result & 0xff) == 0);
+        state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
