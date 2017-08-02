@@ -926,7 +926,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xa8://
+      case 0xa8://XRA B
         result=state->a^state->b;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -935,7 +935,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xa9:
+      case 0xa9://XRA C
         result=state->a^state->c;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -944,7 +944,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xaa://
+      case 0xaa://XRA D
         result=state->a^state->d;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -953,7 +953,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xab://
+      case 0xab://XRA E
         result=state->a^state->e;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -962,7 +962,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xac://
+      case 0xac://XRA H
         result=state->a^state->h;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -971,7 +971,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xad://
+      case 0xad://XRA L
         result=state->a^state->l;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -980,7 +980,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xae://
+      case 0xae://XRA M
         result=state->a^state->memory[(state->h<<8)|state->l];
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -989,7 +989,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xaf://
+      case 0xaf://XRA A
         result=state->a^state->a;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -999,7 +999,7 @@ int Emulate8080Op(State8080* state){
         //state->cc.ac =FIXME
         break;
 
-      case 0xb0://
+      case 0xb0://ORA B
         result=state->a|state->b;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -1008,7 +1008,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xb1:
+      case 0xb1://ORA C
         result=state->a|state->c;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -1017,7 +1017,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xb2://
+      case 0xb2://ORA D
         result=state->a|state->d;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -1026,7 +1026,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xb3://
+      case 0xb3://ORA E
         result=state->a|state->e;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -1035,7 +1035,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xb4://
+      case 0xb4://ORA H
         result=state->a|state->h;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -1044,7 +1044,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xb5://
+      case 0xb5://ORA L
         result=state->a|state->l;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -1053,7 +1053,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xb6://
+      case 0xb6://ORA M
         result=state->a|state->memory[(state->h<<8)|state->l];
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -1062,7 +1062,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xb7://
+      case 0xb7://ORA A
         result=state->a|state->a;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -1071,7 +1071,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xb8://
+      case 0xb8://CMP B
         result=state->a-state->b;
         //state->a=(uint8_t)result;
         state->cc.z = (((uint8_t)result & 0xff) == 0);
@@ -1080,28 +1080,28 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
         break;
-      case 0xb9:
+      case 0xb9://CMP C
         result=state->a-state->c;
         state->cc.z = (((uint8_t)result & 0xff) == 0);
         state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         break;
-      case 0xba://
+      case 0xba://CMP D
         result=state->a-state->d;
         state->cc.z = (((uint8_t)result & 0xff) == 0);
         state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         break;
-      case 0xbb://
+      case 0xbb://CMP E
         result=state->a-state->e;
         state->cc.z = (((uint8_t)result & 0xff) == 0);
         state->cc.s = (((uint8_t)result & 0x80) != 0);
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         break;
-      case 0xbc://
+      case 0xbc://CMP H
         result=state->a-state->h;
         state->cc.z = (((uint8_t)result & 0xff) == 0);
         state->cc.s = (((uint8_t)result & 0x80) != 0);
@@ -1109,7 +1109,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
         break;
-      case 0xbd://
+      case 0xbd://CMP L
         result=state->a-state->l;
         state->cc.z = (((uint8_t)result & 0xff) == 0);
         state->cc.s = (((uint8_t)result & 0x80) != 0);
@@ -1117,7 +1117,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
         break;
-      case 0xbe://
+      case 0xbe://CMP M
         result=state->a-state->memory[(state->h<<8)|state->l];
         state->cc.z = (((uint8_t)result & 0xff) == 0);
         state->cc.s = (((uint8_t)result & 0x80) != 0);
@@ -1125,7 +1125,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
         break;
-      case 0xbf://
+      case 0xbf://CMP A
         result=state->a-state->a;
         state->cc.z = (((uint8_t)result & 0xff) == 0);
         state->cc.s = (((uint8_t)result & 0x80) != 0);
