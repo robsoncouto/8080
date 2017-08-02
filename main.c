@@ -90,7 +90,7 @@ int Emulate8080Op(State8080* state){
       case 0x05: UnimplementedInstruction(state); break;
       case 0x06://MVI B, D8
         state->b=opcode[1];
-        beak;
+        break;
       case 0x07://RLC
         if(state->a&0x80){
           state->a=state->a<<1;
@@ -115,10 +115,9 @@ int Emulate8080Op(State8080* state){
         state->a=state->memory[((state->b)<<8)|((state->c))];
         break;
       case 0x0B://DCX B
-        result=(state->b<<8)|((state->c));
-        result--;
-        state->c=(uint8_t)result&0xFF;
-        state->b=(uint8_t)result>>8;
+        result=((state->b<<8)|state->c)-1;
+        state->b=result>>8;
+        state->c=result&0xFF;
         break;
       case 0x0C://INR C
         result=state->c++;
@@ -195,9 +194,9 @@ int Emulate8080Op(State8080* state){
         state->a=state->memory[(state->d<<8)|((state->e))];
         break;
       case 0x1b://DCX D
-        result=(state->d<<8)|((state->e))-1;
-        state->d=(uint8_t)result>>8;
-        state->e=(uint8_t)result&0xFF;
+        result=((state->d<<8)|state->e)-1;
+        state->d=result>>8;
+        state->e=result&0xFF;
         break;
       case 0x1c://INR E
         result=state->c++;
@@ -273,9 +272,9 @@ int Emulate8080Op(State8080* state){
         state->l=state->memory[opcode[1]];
         break;
       case 0x2b://DCX H
-        result=(state->d<<8)|((state->e))-1;
-        state->d=(uint8_t)result>>8;
-        state->e=(uint8_t)result&0xFF;
+        result=((state->h<<8)|state->l)-1;
+        state->h=result>>8;
+        state->l=result&0xFF;
         break;
       case 0x2c://INR L
         result=state->l++;
@@ -344,7 +343,7 @@ int Emulate8080Op(State8080* state){
         state->a=state->memory[(opcode[2]<<8)|opcode[1]];
         break;
       case 0x3b://DCX SP
-        state->sp++;
+        state->sp--;
         break;
       case 0x3c://INR A
         result=state->a++;
