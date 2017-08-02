@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define ret() state->pc = \
+(state->memory[state->sp+1]<<8)|(state->memory[state->sp])\
+;state->sp=state->sp+2;
+
 /* This code in an exercice from
 emulator101.com*/
 typedef struct ConditionCodes {
@@ -1118,7 +1122,56 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
         break;
-
+      case 0xc0://RNZ
+        if(!state->cc.z) ret();
+        break;
+      case 0xc1://POP B
+        state->c=state->memory[state->sp];
+        state->b=state->memory[state->sp+1];
+        state->sp=state->sp+2;
+        break;
+      case 0xc2://JNZ ADR
+        if(!state->cc.z) state->pc=(opcode[2]<<8)|opcode[1];
+        break;
+      case 0xc3://JMP ADR
+        state->pc=(opcode[2]<<8)|opcode[1];
+        break;
+      case 0xc4://CNZ ADR
+        if(!state->cc.z){
+          //fcall 0
+          state->memory[state->sp-1]=state->pc>>8;
+          state->memory[state->sp-2]=state->pc&0xff;
+          state->sp=state->sp+2;
+          state->pc=0;
+        }
+        break;
+      case 0xc5://PUSH B
+        state->memory[state->sp-2]=state->c;
+        state->memory[state->sp-1]=state->b;
+        state->sp=state->sp-2;
+        break;
+      case 0xc6://ADI D8
+        result=state->a+opcode[1];
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0xc7://RST 0
+        //function call:
+        state->memory[state->sp-1]=state->pc>>8;
+        state->memory[state->sp-2]=state->pc&0xff;
+        state->sp=state->sp+2;
+        state->pc=(opcode[2]<<8)|opcode[1];
+        break;
+      case 0xc8://RZ
+        if(state->cc.z) ret();
+        break;
+      case 0xc9://
+        ret();
+        break;
       case 0xff: UnimplementedInstruction(state); break;
   }
   //state->pc+=1;  //for the opcode
