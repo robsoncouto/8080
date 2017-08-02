@@ -90,7 +90,7 @@ int Emulate8080Op(State8080* state){
       case 0x05: UnimplementedInstruction(state); break;
       case 0x06://MVI B, D8
         state->b=opcode[1];
-        break;
+        beak;
       case 0x07://RLC
         if(state->a&0x80){
           state->a=state->a<<1;
@@ -232,7 +232,7 @@ int Emulate8080Op(State8080* state){
         state->h=opcode[2];
         state->l=opcode[1];
         break;
-      case 0x22://STAX H;
+      case 0x22://SHLD ADR;
         //FIXME
         break;
       case 0x23://INX H
@@ -362,209 +362,209 @@ int Emulate8080Op(State8080* state){
         state->cc.cy = (result > 0xff);
         state->cc.p = ~(state->a);
         break;
-      case 0x3e://MVI L, D8
+      case 0x3e://MVI A, D8
         state->a=opcode[1];
         break;
       case 0x3f://CMC
         state->cc.cy=~state->cc.cy;
         break;
 
-      case 0x40://
+      case 0x40://MOV B, B
         state->b=state->b;
         break;
-      case 0x41://
+      case 0x41://MOV B, C
         state->b=state->c;
         break;
-      case 0x42://
+      case 0x42://MOV B, D
         state->b=state->d;
         break;
-      case 0x43://
+      case 0x43://MOV B, E
         state->b=state->e;
         break;
-      case 0x44://
+      case 0x44://MOV B, H
         state->b=state->h;
         break;
-      case 0x45://
+      case 0x45://MOV B, L
         state->b=state->l;
         break;
-      case 0x46://
+      case 0x46://MOV B, M
         state->b=state->memory[(state->h<<8)|(state->l)];
         break;
-      case 0x47://
+      case 0x47://MOV B, A
         state->b=state->a;
         break;
-      case 0x48://
+      case 0x48://MOV C, B
         state->c=state->b;
         break;
-      case 0x49://
+      case 0x49://MOV C, C
         state->c=state->c;
         break;
-      case 0x4a://
+      case 0x4a://MOV C, D
         state->c=state->d;
         break;
-      case 0x4b://
+      case 0x4b://MOV C, E
         state->c=state->e;
         break;
-      case 0x4c://
+      case 0x4c://MOV C, H
         state->c=state->h;
         break;
-      case 0x4d://
+      case 0x4d://MOV C, L
         state->c=state->l;
         break;
-      case 0x4e://
+      case 0x4e://MOV C, M
         state->c=state->memory[(state->h<<8)|(state->l)];
         break;
-      case 0x4f://
+      case 0x4f://MOV C, A
         state->c=state->a;
         break;
 
-      case 0x50://
+      case 0x50://MOV D, B
         state->d=state->b;
         break;
-      case 0x51://
+      case 0x51://MOV D, C
         state->d=state->c;
         break;
-      case 0x52://
+      case 0x52://MOV D, D
         state->d=state->d;
         break;
-      case 0x53://
+      case 0x53://MOV D, E
         state->d=state->e;
         break;
-      case 0x54://
+      case 0x54://MOV D, H
         state->d=state->h;
         break;
-      case 0x55://
+      case 0x55://MOV D, L
         state->d=state->l;
         break;
-      case 0x56://
+      case 0x56://MOV D, M
         state->d=state->memory[(state->h<<8)|(state->l)];
         break;
-      case 0x57://
+      case 0x57://MOV D, A
         state->d=state->a;
         break;
-      case 0x58://
+      case 0x58://MOV E, B
         state->e=state->b;
         break;
-      case 0x59://
+      case 0x59://MOV E, C
         state->e=state->c;
         break;
-      case 0x5a://
+      case 0x5a://MOV E, D
         state->e=state->d;
         break;
-      case 0x5b://
+      case 0x5b://MOV E, E
         state->e=state->e;
         break;
-      case 0x5c://
+      case 0x5c://MOV E, H
         state->e=state->h;
         break;
-      case 0x5d://
+      case 0x5d://MOV E, L
         state->e=state->l;
         break;
-      case 0x5e://
+      case 0x5e://MOV E, M
         state->e=state->memory[(state->h<<8)|(state->l)];
         break;
-      case 0x5f://
+      case 0x5f://MOV E, A
         state->e=state->a;
         break;
 
-      case 0x60://
+      case 0x60://MOV H, B
         state->h=state->b;
         break;
-      case 0x61://
+      case 0x61://MOV H, C
         state->h=state->c;
         break;
-      case 0x62://
+      case 0x62://MOV H, D
         state->h=state->d;
         break;
-      case 0x63://
+      case 0x63://MOV H, E
         state->h=state->e;
         break;
-      case 0x64://
+      case 0x64://MOV H, H
         state->h=state->h;
         break;
-      case 0x65://
+      case 0x65://MOV H, L
         state->h=state->l;
         break;
-      case 0x66://
+      case 0x66://MOV H, M
         state->h=state->memory[(state->h<<8)|(state->l)];
         break;
-      case 0x67://
+      case 0x67://MOV H, A
         state->h=state->a;
         break;
-      case 0x68://
+      case 0x68://MOV L, B
         state->l=state->b;
         break;
-      case 0x69://
+      case 0x69://MOV L, C
         state->l=state->c;
         break;
-      case 0x6a://
+      case 0x6a://MOV L, D
         state->l=state->d;
         break;
-      case 0x6b://
+      case 0x6b://MOV L, E
         state->l=state->e;
         break;
-      case 0x6c://
+      case 0x6c://MOV L, H
         state->l=state->h;
         break;
-      case 0x6d://
+      case 0x6d://MOV L, L
         state->l=state->l;
         break;
-      case 0x6e://
+      case 0x6e://MOV L, M
         state->l=state->memory[(state->h<<8)|(state->l)];
         break;
-      case 0x6f://
+      case 0x6f://MOV L, A
         state->l=state->a;
         break;
 
-      case 0x70://
+      case 0x70://MOV M, B
         state->memory[(state->h<<8)|(state->l)]=state->b;
         break;
-      case 0x71://
+      case 0x71://MOV M, C
         state->memory[(state->h<<8)|(state->l)]=state->c;
         break;
-      case 0x72://
+      case 0x72://MOV M, D
         state->memory[(state->h<<8)|(state->l)]=state->d;
         break;
-      case 0x73://
+      case 0x73://MOV M, E
         state->memory[(state->h<<8)|(state->l)]=state->e;
         break;
-      case 0x74://
+      case 0x74://MOV M, H
         state->memory[(state->h<<8)|(state->l)]=state->h;
         break;
-      case 0x75://
+      case 0x75://MOV M, E
         state->memory[(state->h<<8)|(state->l)]=state->l;
         break;
       case 0x76://HLT
         break;
-      case 0x77://
+      case 0x77://MOV M, A
         state->memory[(state->h<<8)|(state->l)]=state->a;
         break;
-      case 0x78://
+      case 0x78://MOV A, B
         state->a=state->b;
         break;
-      case 0x79://
+      case 0x79://MOV A, C
         state->a=state->c;
         break;
-      case 0x7a://
+      case 0x7a://MOV A, D
         state->a=state->d;
         break;
-      case 0x7b://
+      case 0x7b://MOV A, E
         state->a=state->e;
         break;
-      case 0x7c://
+      case 0x7c://MOV A, H
         state->a=state->h;
         break;
-      case 0x7d://
+      case 0x7d://MOV A, L
         state->a=state->l;
         break;
-      case 0x7e://
+      case 0x7e://MOV A, M
         state->a=state->memory[(state->h<<8)|(state->l)];
         break;
-      case 0x7f://
+      case 0x7f://MOV A, A
         state->a=state->a;
         break;
 
-      case 0x80://
+      case 0x80://ADD B
         result=state->a+state->b;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -573,7 +573,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x81:
+      case 0x81://ADD C
         result=state->a+state->c;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -582,7 +582,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x82://
+      case 0x82://ADD D
         result=state->a+state->d;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -591,7 +591,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x83://
+      case 0x83://ADD E
         result=state->a+state->e;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -600,7 +600,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x84://
+      case 0x84://ADD H
         result=state->a+state->h;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -609,7 +609,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x85://
+      case 0x85://ADD L
         result=state->a+state->l;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -618,7 +618,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x86://
+      case 0x86://ADD M
         result=state->a+state->memory[(state->h<<8)|state->l];
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -627,7 +627,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x87://
+      case 0x87://ADD A
         result=state->a+state->a;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -636,7 +636,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x88://ADC
+      case 0x88://ADC B
         result=state->a+state->b+state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -645,7 +645,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x89://
+      case 0x89://ADC C
         result=state->a+state->c+state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -654,7 +654,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x8a://
+      case 0x8a://ADC D
         result=state->a+state->d+state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -663,7 +663,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x8b://
+      case 0x8b://ADC E
         result=state->a+state->e+state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -672,7 +672,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x8c://
+      case 0x8c://ADC H
         result=state->a+state->h+state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -681,7 +681,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x8d://
+      case 0x8d://ADC L
         result=state->a+state->l+state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -690,7 +690,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x8e://
+      case 0x8e://ADC M
         result=state->a+state->memory[(state->h<<8)|state->l]+state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -699,7 +699,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x8f://
+      case 0x8f://ADC A
         result=state->a+state->a+state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -709,7 +709,7 @@ int Emulate8080Op(State8080* state){
         //state->cc.ac =FIXME
         break;
 
-      case 0x90://
+      case 0x90://SUB B
         result=state->a-state->b;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -718,7 +718,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x91:
+      case 0x91://SUB C
         result=state->a-state->c;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -727,7 +727,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x92://
+      case 0x92:////SUB D
         result=state->a-state->d;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -736,7 +736,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x93://
+      case 0x93://SUB E
         result=state->a-state->e;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -745,7 +745,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x94://
+      case 0x94://SUB H
         result=state->a-state->h;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -754,7 +754,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x95://
+      case 0x95://SUB L
         result=state->a-state->l;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -763,7 +763,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x96://
+      case 0x96://SUB M
         result=state->a-state->memory[(state->h<<8)|state->l];
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -772,7 +772,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x97://
+      case 0x97://SUB A
         result=state->a-state->a;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -781,7 +781,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x98://ADC
+      case 0x98://SBB B
         result=state->a-state->b-state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -790,7 +790,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x99://
+      case 0x99://SBB C
         result=state->a-state->c-state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -799,7 +799,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x9a://
+      case 0x9a://SBB D
         result=state->a-state->d-state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -808,7 +808,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x9b://
+      case 0x9b://SBB E
         result=state->a-state->e-state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -817,7 +817,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x9c://
+      case 0x9c://SBB H
         result=state->a-state->h-state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -826,7 +826,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x9d://
+      case 0x9d://SBB L
         result=state->a-state->l-state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -835,7 +835,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x9e://
+      case 0x9e://SBB M
         result=state->a-state->memory[(state->h<<8)|state->l]-state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -844,7 +844,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0x9f://
+      case 0x9f://SBB A
         result=state->a-state->a-state->cc.cy;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -854,7 +854,7 @@ int Emulate8080Op(State8080* state){
         //state->cc.ac =FIXME
         break;
 
-      case 0xa0://
+      case 0xa0://ANA B
         result=state->a&state->b;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -863,7 +863,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xa1:
+      case 0xa1://ANA C
         result=state->a&state->c;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -872,7 +872,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xa2://
+      case 0xa2://ANA D
         result=state->a&state->d;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -881,7 +881,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xa3://
+      case 0xa3://ANA E
         result=state->a&state->e;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -890,7 +890,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xa4://
+      case 0xa4://ANA H
         result=state->a&state->h;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -899,7 +899,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xa5://
+      case 0xa5://ANA L
         result=state->a&state->l;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -908,7 +908,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xa6://
+      case 0xa6://ANA M
         result=state->a&state->memory[(state->h<<8)|state->l];
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -917,7 +917,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
         break;
-      case 0xa7://
+      case 0xa7://ANA A
         result=state->a&state->a;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
