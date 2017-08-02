@@ -2,7 +2,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "disassembler/8080disasm.h"
 #define ret() state->pc = \
 (state->memory[state->sp+1]<<8)|(state->memory[state->sp])\
 ;state->sp=state->sp+2;
@@ -38,7 +38,18 @@ void UnimplementedInstruction(State8080* state)
   printf ("Error: Unimplemented instruction\n");
   exit(1);
  }
-
+void printsate(State8080* state){
+  printf("A:%02x ",state->a);
+  printf("B:%02x ",state->b);
+  printf("C:%02x ",state->c);
+  printf("D:%02x ",state->d);
+  printf("E:%02x ",state->e);
+  printf("H:%02x ",state->h);
+  printf("L:%02x ",state->l);
+  printf("SP:%04x ",state->sp);
+  printf("PC:%04x ",state->pc);
+  printf("\n");
+}
 int Emulate8080Op(State8080* state){
   unsigned char *opcode = &state->memory[state->pc];
   state->pc+=1;
@@ -78,9 +89,9 @@ int Emulate8080Op(State8080* state){
       /*....*/
       case 0x05: UnimplementedInstruction(state); break;
       case 0x06://MVI B, D8
-        state->b=opcode[2];
+        state->b=opcode[1];
         break;
-      case 0x07:
+      case 0x07://RLC
         if(state->a&0x80){
           state->a=state->a<<1;
           state->a=state->a|0x01;
@@ -1493,5 +1504,12 @@ int main(void){
     printf("Problem moving %d bytes to buffer\n",filesize );
   }
   curr_state.memory=buffer;
-  Emulate8080Op(&curr_state);
+  printsate(&curr_state);
+  int i=30;
+  while(i>0){
+    disassemble(buffer, curr_state.pc);
+    Emulate8080Op(&curr_state);
+    printsate(&curr_state);
+    i--;
+  }
 }
