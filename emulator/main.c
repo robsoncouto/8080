@@ -1288,9 +1288,185 @@ int Emulate8080Op(State8080* state){
         state->sp=state->sp+2;
         state->pc=0x18;
         break;
-      
 
-      case 0xff: UnimplementedInstruction(state); break;
+      case 0xe0://RPO
+        if(!state->cc.p) ret();
+        break;
+      case 0xe1://POP H
+        state->l=state->memory[state->sp];
+        state->h=state->memory[state->sp+1];
+        state->sp=state->sp+2;
+        break;
+      case 0xe2://JPO ADR
+        if(!state->cc.p) state->pc=(opcode[2]<<8)|opcode[1];
+        break;
+      case 0xe3://XTHL
+        state->l=state->memory[state->sp];
+        state->h=state->memory[state->sp+1];
+        break;
+      case 0xe4://CPO ADR
+        if(!state->cc.p){
+          //fcall 0
+          state->memory[state->sp-1]=state->pc>>8;
+          state->memory[state->sp-2]=state->pc&0xff;
+          state->sp=state->sp+2;
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }
+        break;
+      case 0xe5://PUSH H
+        state->memory[state->sp-2]=state->l;
+        state->memory[state->sp-1]=state->h;
+        state->sp=state->sp-2;
+        break;
+      case 0xe6://ANI D8
+        result=state->a&opcode[1];
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0xe7://RST 4 (0x20)
+        //function call:
+        state->memory[state->sp-1]=state->pc>>8;
+        state->memory[state->sp-2]=state->pc&0xff;
+        state->sp=state->sp+2;
+        state->pc=0x20;
+        break;
+      case 0xe8://RPE
+        if(state->cc.p) ret();
+        break;
+      case 0xe9://PCHL
+        state->pc=(state->h<<8)|(state->l);
+        break;
+      case 0xea://JPE ADR
+        if(state->cc.p) state->pc=(opcode[2]<<8)|opcode[1];
+        break;
+      case 0xeb://XCHG exchanges H<->D and L<->E
+        state->h=state->h+state->d;
+        state->d=state->h-state->d;
+        state->h=state->h-state->d;
+
+        state->l=state->l+state->e;
+        state->e=state->l-state->e;
+        state->l=state->l-state->e;
+        break;
+      case 0xec://CPE ADR
+        if(state->cc.p){
+          //fcall
+          state->memory[state->sp-1]=state->pc>>8;
+          state->memory[state->sp-2]=state->pc&0xff;
+          state->sp=state->sp+2;
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }
+        break;
+      case 0xed://undefined
+        break;
+      case 0xee://XRI D8
+        result=state->a^opcode[1];
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0xef://RST 5 (28h)
+        state->memory[state->sp-1]=state->pc>>8;
+        state->memory[state->sp-2]=state->pc&0xff;
+        state->sp=state->sp+2;
+        state->pc=0x28;
+        break;
+
+
+      case 0xf0://RP P=positive
+        if(!state->cc.s) ret();
+        break;
+      case 0xf1://POP PSW FIXME
+        // state->l=state->memory[state->sp];
+        // state->h=state->memory[state->sp+1];
+        // state->sp=state->sp+2;
+        break;
+      case 0xf2://JP ADR
+        if(!state->cc.s) state->pc=(opcode[2]<<8)|opcode[1];
+        break;
+      case 0xf3://DI NOTE SPECIAL
+        break;
+      case 0xf4://CP ADR
+        if(!state->cc.s){
+          //fcall 0
+          state->memory[state->sp-1]=state->pc>>8;
+          state->memory[state->sp-2]=state->pc&0xff;
+          state->sp=state->sp+2;
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }
+        break;
+      case 0xf5://PUSH PSW FIXME
+        // state->memory[state->sp-2]=state->l;
+        // state->memory[state->sp-1]=state->h;
+        // state->sp=state->sp-2;
+        break;
+      case 0xf6://OEI D8
+        result=state->a|opcode[1];
+        state->a=(uint8_t)result;
+        state->cc.z = ((state->a & 0xff) == 0);
+        state->cc.s = ((state->a & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->a);
+        //state->cc.ac =FIXME
+        break;
+      case 0xf7://RST 6 (0x30)
+        //function call:
+        state->memory[state->sp-1]=state->pc>>8;
+        state->memory[state->sp-2]=state->pc&0xff;
+        state->sp=state->sp+2;
+        state->pc=0x30;
+        break;
+      case 0xf8://RM
+        if(state->cc.s) ret();
+        break;
+      case 0xf9://SPHL
+        state->sp=(state->h<<8)|(state->l);
+        break;
+      case 0xfa://JM ADR
+        if(state->cc.s) state->pc=(opcode[2]<<8)|opcode[1];
+        break;
+      case 0xfb://EI NOTE special
+        state->h=state->h+state->d;
+        state->d=state->h-state->d;
+        state->h=state->h-state->d;
+
+        state->l=state->l+state->e;
+        state->e=state->l-state->e;
+        state->l=state->l-state->e;
+        break;
+      case 0xfc://CM ADR
+        if(state->cc.s){
+          //fcall
+          state->memory[state->sp-1]=state->pc>>8;
+          state->memory[state->sp-2]=state->pc&0xff;
+          state->sp=state->sp+2;
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }
+        break;
+      case 0xfd://undefined
+        break;
+      case 0xfe://CPI D8 FIXME
+        result=state->a-opcode[1];
+        state->cc.z = (((uint8_t)result & 0xff) == 0);
+        state->cc.s = (((uint8_t)result & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~((uint8_t)result);
+        //state->cc.ac =FIXME
+        break;
+      case 0xff://RST 7 (38h)
+        state->memory[state->sp-1]=state->pc>>8;
+        state->memory[state->sp-2]=state->pc&0xff;
+        state->sp=state->sp+2;
+        state->pc=0x38;
+        break;
+
   }
   //state->pc+=1;  //for the opcode
 }
