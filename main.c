@@ -71,13 +71,6 @@ int Emulate8080Op(State8080* state){
         state->memory[((state->b)<<8)|((state->c))]=state->a;
         break;
       case 0x03://INX B
-        // result=state->c+1;
-        // if(result>0xFF){
-        //   state->c+=1;
-        //   state->b+=1;
-        // }else{
-        //   state->c+=1;
-        // }
         result=(state->b<<8)|(state->c);
         result++;
         state->c=(uint8_t)result>>8;
@@ -93,7 +86,14 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->b&0x01);
         break;
       /*....*/
-      case 0x05: UnimplementedInstruction(state); break;
+      case 0x05://DCR B
+        result=state->b-1;
+        state->b=(uint8_t)result;
+        state->cc.z = ((state->b & 0xff) == 0);
+        state->cc.s = ((state->b & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->b);
+        break;
       case 0x06://MVI B, D8
         state->b=opcode[1];
         break;
@@ -134,7 +134,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->c&0x01);
         break;
       case 0x0D://DCR C
-        result=state->c--;
+        result=state->c-1;
         state->c=(uint8_t)result;
         state->cc.z = ((state->c & 0xff) == 0);
         state->cc.s = ((state->c & 0x80) != 0);
@@ -173,11 +173,12 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->d&0x01);
         break;
       case 0x15://DCR D
-        state->d--;
-        state->cc.z=(state->d&0xff);
-        state->cc.s=(state->d&0x10);
-        state->cc.p=~(state->d&0x01);
-        state->cc.ac=0;//FIXME
+        result=state->d-1;
+        state->d=(uint8_t)result;
+        state->cc.z = ((state->d & 0xff) == 0);
+        state->cc.s = ((state->d & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->d);
         break;
       case 0x16://MVI D, D8
         state->d=opcode[1];
@@ -214,7 +215,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->e&0x01);
         break;
       case 0x1d://DCR E
-        result=state->e--;
+        result=state->e-1;
         state->e=(uint8_t)result;
         state->cc.z = ((state->e & 0xff) == 0);
         state->cc.s = ((state->e & 0x80) != 0);
@@ -255,11 +256,12 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->h&0x01);
         break;
       case 0x25://DCR H
-        state->h--;
-        state->cc.z=(state->h&0xff);
-        state->cc.s=(state->h&0x80);
-        state->cc.p=~(state->h&0x01);
-        state->cc.ac=0;//FIXME
+        result=state->h-1;
+        state->h=(uint8_t)result;
+        state->cc.z = ((state->h & 0xff) == 0);
+        state->cc.s = ((state->h & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->h);
         break;
       case 0x26://MVI H, D8
         state->h=opcode[1];
@@ -293,7 +295,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->l&0x01);
         break;
       case 0x2d://DCR L
-        result=state->l--;
+        result=state->l-1;
         state->l=(uint8_t)result;
         state->cc.z = ((state->l & 0xff) == 0);
         state->cc.s = ((state->l & 0x80) != 0);
@@ -326,7 +328,7 @@ int Emulate8080Op(State8080* state){
         state->cc.ac=0;//FIXME
         break;
       case 0x35://DCR M
-        state->memory[(state->h<<8)|(state->l)]--;
+        state->memory[(state->h<<8)|(state->l)]-1;
         state->cc.z=(state->memory[(state->h<<8)|(state->l)]&0xff);
         state->cc.s=(state->memory[(state->h<<8)|(state->l)]&0x80);
         state->cc.p=~(state->memory[(state->h<<8)|(state->l)]&0x01);
@@ -362,7 +364,7 @@ int Emulate8080Op(State8080* state){
         state->cc.p = ~(state->a&0x01);
         break;
       case 0x3d://DCR A
-        result=state->a--;
+        result=state->a-1;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
         state->cc.s = ((state->a & 0x80) != 0);
@@ -1512,7 +1514,7 @@ int main(void){
   }
   curr_state.memory=buffer;
   printsate(&curr_state);
-  int i=30;
+  int i=100;
   while(i>0){
     disassemble(buffer, curr_state.pc);
     Emulate8080Op(&curr_state);
