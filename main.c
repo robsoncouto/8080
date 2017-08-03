@@ -39,12 +39,12 @@ void UnimplementedInstruction(State8080* state)
   exit(1);
  }
 void printsate(State8080* state){
-  printf("A:%02x",state->a);
-  printf("B:%02x ",state->b);
-  printf("C:%02x",state->c);
-  printf("D:%02x ",state->d);
-  printf("E:%02x",state->e);
-  printf("H:%02x ",state->h);
+  printf("A:%02x ",state->a);
+  printf("B:%02x",state->b);
+  printf("C:%02x ",state->c);
+  printf("D:%02x",state->d);
+  printf("E:%02x ",state->e);
+  printf("H:%02x",state->h);
   printf("L:%02x ",state->l);
   printf("SP:%04x ",state->sp);
   printf("PC:%04x---",state->pc);
@@ -85,7 +85,7 @@ int Emulate8080Op(State8080* state){
 
         break;
       case 0x04://INR B
-        result=state->b++;
+        result=state->b+1;
         state->b=(uint8_t)result;
         state->cc.z = ((state->b & 0xff) == 0);
         state->cc.s = ((state->b & 0x80) != 0);
@@ -126,7 +126,7 @@ int Emulate8080Op(State8080* state){
         state->c=result&0xFF;
         break;
       case 0x0C://INR C
-        result=state->c++;
+        result=state->c+1;
         state->c=(uint8_t)result;
         state->cc.z = ((state->c & 0xff) == 0);
         state->cc.s = ((state->c & 0x80) != 0);
@@ -165,7 +165,7 @@ int Emulate8080Op(State8080* state){
         state->d=result>>8;
         break;
       case 0x14://INR D
-        result=state->d++;
+        result=state->d+1;
         state->d=(uint8_t)result;
         state->cc.z = ((state->d & 0xff) == 0);
         state->cc.s = ((state->d & 0x80) != 0);
@@ -206,7 +206,7 @@ int Emulate8080Op(State8080* state){
         state->e=result&0xFF;
         break;
       case 0x1c://INR E
-        result=state->e++;
+        result=state->e+1;
         state->e=(uint8_t)result;
         state->cc.z = ((state->e & 0xff) == 0);
         state->cc.s = ((state->e & 0x80) != 0);
@@ -247,7 +247,7 @@ int Emulate8080Op(State8080* state){
         state->l=result>>8;
         break;
       case 0x24://INR H
-        result=state->h++;
+        result=state->h+1;
         state->h=(uint8_t)result;
         state->cc.z = ((state->h & 0xff) == 0);
         state->cc.s = ((state->h & 0x80) != 0);
@@ -285,7 +285,7 @@ int Emulate8080Op(State8080* state){
         state->l=result&0xFF;
         break;
       case 0x2c://INR L
-        result=state->l++;
+        result=state->l+1;
         state->l=(uint8_t)result;
         state->cc.z = ((state->l & 0xff) == 0);
         state->cc.s = ((state->l & 0x80) != 0);
@@ -319,7 +319,7 @@ int Emulate8080Op(State8080* state){
         state->sp++;
         break;
       case 0x34://INR M
-        state->memory[(state->h<<8)|(state->l)]++;
+        state->memory[(state->h<<8)|(state->l)]+1;
         state->cc.z=(state->memory[(state->h<<8)|(state->l)]&0xff);
         state->cc.s=(state->memory[(state->h<<8)|(state->l)]&0x80);
         state->cc.p=~(state->memory[(state->h<<8)|(state->l)]&0x01);
@@ -354,7 +354,7 @@ int Emulate8080Op(State8080* state){
         state->sp--;
         break;
       case 0x3c://INR A
-        result=state->a++;
+        result=state->a+1;
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
         state->cc.s = ((state->a & 0x80) != 0);
