@@ -39,15 +39,20 @@ void UnimplementedInstruction(State8080* state)
   exit(1);
  }
 void printsate(State8080* state){
-  printf("A:%02x ",state->a);
+  printf("A:%02x",state->a);
   printf("B:%02x ",state->b);
-  printf("C:%02x ",state->c);
+  printf("C:%02x",state->c);
   printf("D:%02x ",state->d);
-  printf("E:%02x ",state->e);
+  printf("E:%02x",state->e);
   printf("H:%02x ",state->h);
   printf("L:%02x ",state->l);
   printf("SP:%04x ",state->sp);
-  printf("PC:%04x ",state->pc);
+  printf("PC:%04x---",state->pc);
+  printf("Z:%d ",state->cc.z);
+  printf("CY:%d ",state->cc.cy);
+  printf("P:%d ",state->cc.p);
+  printf("S:%d ",state->cc.s);
+  printf("AC:%d ",state->cc.ac);
   printf("\n");
 }
 int Emulate8080Op(State8080* state){
@@ -80,12 +85,13 @@ int Emulate8080Op(State8080* state){
 
         break;
       case 0x04://INR B
-        // state->b+=1;
-        // state->cc.z = ((state->b & 0xff) == 0);
-        // state->cc.s = ((state->b & 0x80) != 0);
-        // state->cc.cy = (answer > 0xff);
-        // state->cc.p = Parity(answer&0xff);
-        // break;
+        result=state->b++;
+        state->b=(uint8_t)result;
+        state->cc.z = ((state->b & 0xff) == 0);
+        state->cc.s = ((state->b & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->b&0x01);
+        break;
       /*....*/
       case 0x05: UnimplementedInstruction(state); break;
       case 0x06://MVI B, D8
@@ -125,7 +131,7 @@ int Emulate8080Op(State8080* state){
         state->cc.z = ((state->c & 0xff) == 0);
         state->cc.s = ((state->c & 0x80) != 0);
         state->cc.cy = (result > 0xff);
-        state->cc.p = ~(state->c);
+        state->cc.p = ~(state->c&0x01);
         break;
       case 0x0D://DCR C
         result=state->c--;
@@ -159,11 +165,12 @@ int Emulate8080Op(State8080* state){
         state->d=result>>8;
         break;
       case 0x14://INR D
-        state->d++;
-        state->cc.z=(state->d&0xff);
-        state->cc.s=(state->d&0x10);
-        state->cc.p=~(state->d&0x01);
-        state->cc.ac=0;//FIXME
+        result=state->d++;
+        state->d=(uint8_t)result;
+        state->cc.z = ((state->d & 0xff) == 0);
+        state->cc.s = ((state->d & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->d&0x01);
         break;
       case 0x15://DCR D
         state->d--;
@@ -199,12 +206,12 @@ int Emulate8080Op(State8080* state){
         state->e=result&0xFF;
         break;
       case 0x1c://INR E
-        result=state->c++;
+        result=state->e++;
         state->e=(uint8_t)result;
         state->cc.z = ((state->e & 0xff) == 0);
         state->cc.s = ((state->e & 0x80) != 0);
         state->cc.cy = (result > 0xff);
-        state->cc.p = ~(state->e);
+        state->cc.p = ~(state->e&0x01);
         break;
       case 0x1d://DCR E
         result=state->e--;
@@ -240,11 +247,12 @@ int Emulate8080Op(State8080* state){
         state->l=result>>8;
         break;
       case 0x24://INR H
-        state->h++;
-        state->cc.z=(state->h&0xff);
-        state->cc.s=(state->h&0x80);
-        state->cc.p=~(state->h&0x01);
-        state->cc.ac=0;//FIXME
+        result=state->h++;
+        state->h=(uint8_t)result;
+        state->cc.z = ((state->h & 0xff) == 0);
+        state->cc.s = ((state->h & 0x80) != 0);
+        state->cc.cy = (result > 0xff);
+        state->cc.p = ~(state->h&0x01);
         break;
       case 0x25://DCR H
         state->h--;
@@ -282,7 +290,7 @@ int Emulate8080Op(State8080* state){
         state->cc.z = ((state->l & 0xff) == 0);
         state->cc.s = ((state->l & 0x80) != 0);
         state->cc.cy = (result > 0xff);
-        state->cc.p = ~(state->l);
+        state->cc.p = ~(state->l&0x01);
         break;
       case 0x2d://DCR L
         result=state->l--;
@@ -351,7 +359,7 @@ int Emulate8080Op(State8080* state){
         state->cc.z = ((state->a & 0xff) == 0);
         state->cc.s = ((state->a & 0x80) != 0);
         state->cc.cy = (result > 0xff);
-        state->cc.p = ~(state->a);
+        state->cc.p = ~(state->a&0x01);
         break;
       case 0x3d://DCR A
         result=state->a--;
