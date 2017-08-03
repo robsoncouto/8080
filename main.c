@@ -40,12 +40,12 @@ void UnimplementedInstruction(State8080* state)
  }
 void printsate(State8080* state){
   printf("A:%02x ",state->a);
-  printf("B:%02x",state->b);
-  printf("C:%02x ",state->c);
-  printf("D:%02x",state->d);
-  printf("E:%02x ",state->e);
-  printf("H:%02x",state->h);
-  printf("L:%02x ",state->l);
+  printf("BC:%02x",state->b);
+  printf("%02x ",state->c);
+  printf("DE:%02x",state->d);
+  printf("%02x ",state->e);
+  printf("HL:%02x",state->h);
+  printf("%02x ",state->l);
   printf("SP:%04x ",state->sp);
   printf("PC:%04x---",state->pc);
   printf("Z:%d ",state->cc.z);
@@ -57,7 +57,7 @@ void printsate(State8080* state){
 }
 int Emulate8080Op(State8080* state){
   unsigned char *opcode = &state->memory[state->pc];
-  state->pc+=1;
+  state->pc++;
   uint32_t result=0;
   switch(*opcode){
       case 0x00: //NOP
@@ -85,7 +85,6 @@ int Emulate8080Op(State8080* state){
         state->cc.cy = (result > 0xff);
         state->cc.p = ~(state->b&0x01);
         break;
-      /*....*/
       case 0x05://DCR B
         result=state->b-1;
         state->b=(uint8_t)result;
@@ -155,9 +154,10 @@ int Emulate8080Op(State8080* state){
       case 0x11://LXI D,D16
         state->d=opcode[2];
         state->e=opcode[1];
+        state->pc += 2;
         break;
       case 0x12://STAX D;
-        state->memory[(state->d<<8)|(state->e&0xff)]=state->a;
+        state->memory[(state->d<<8)|(state->e)]=state->a;
         break;
       case 0x13://INX D
         result=(state->d<<8)|(state->e&0xff)+1;
@@ -238,6 +238,7 @@ int Emulate8080Op(State8080* state){
       case 0x21://LXI H,D16
         state->h=opcode[2];
         state->l=opcode[1];
+        state->pc += 2;
         break;
       case 0x22://SHLD ADR;
         //FIXME
@@ -313,6 +314,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x31://LXI SP,D16
         state->sp=(opcode[2]<<8)|opcode[1];
+        state->pc += 2;
         break;
       case 0x32://STA ADR;
         state->memory[(opcode[2]<<8)|opcode[1]]=state->a;
