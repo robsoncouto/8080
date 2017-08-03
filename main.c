@@ -95,6 +95,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x06://MVI B, D8
         state->b=opcode[1];
+        state->pc += 1;
         break;
       case 0x07://RLC
         if(state->a&0x80){
@@ -142,6 +143,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x0E://MVI C, D8
         state->c=opcode[1];
+        state->pc += 1;
         break;
       case 0x0F://RRC
         result=state->a;
@@ -182,6 +184,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x16://MVI D, D8
         state->d=opcode[1];
+        state->pc += 1;
         break;
       case 0x17://RAL
         result=state->a;
@@ -224,6 +227,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x1e://MVI E, D8
         state->e=opcode[1];
+        state->pc += 1;
         break;
       case 0x1f://RAR
         result=state->a;
@@ -266,6 +270,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x26://MVI H, D8
         state->h=opcode[1];
+        state->pc += 1;
         break;
       case 0x27://DAA
         break;
@@ -305,6 +310,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x2e://MVI L, D8
         state->l=opcode[1];
+        state->pc += 1;
         break;
       case 0x2f://CMA
         state->a=~state->a;
@@ -338,6 +344,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x36://MVI H, D8
         state->memory[(state->h<<8)|(state->l)]=opcode[1];
+        state->pc += 1;
         break;
       case 0x37://STC
         state->cc.cy=1;
@@ -375,6 +382,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x3e://MVI A, D8
         state->a=opcode[1];
+        state->pc += 1;
         break;
       case 0x3f://CMC
         state->cc.cy=~state->cc.cy;
@@ -1180,6 +1188,7 @@ int Emulate8080Op(State8080* state){
         state->cc.cy = (result > 0xff);
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
+        state->pc += 1;
         break;
       case 0xc7://RST 0
         //function call:
@@ -1266,6 +1275,7 @@ int Emulate8080Op(State8080* state){
         state->cc.cy = (result > 0xff);
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
+        state->pc += 1;
         break;
       case 0xd7://RST 2 (0x10)
         //function call:
@@ -1348,6 +1358,7 @@ int Emulate8080Op(State8080* state){
         state->cc.cy = (result > 0xff);
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
+        state->pc += 1;
         break;
       case 0xe7://RST 4 (0x20)
         //function call:
@@ -1393,6 +1404,7 @@ int Emulate8080Op(State8080* state){
         state->cc.cy = (result > 0xff);
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
+        state->pc += 1;
         break;
       case 0xef://RST 5 (28h)
         state->memory[state->sp-1]=state->pc>>8;
