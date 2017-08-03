@@ -245,7 +245,9 @@ int Emulate8080Op(State8080* state){
         state->pc += 2;
         break;
       case 0x22://SHLD ADR;
-        //FIXME
+        state->memory[(opcode[2]<<8)|opcode[1]]=state->l;
+        state->memory[((opcode[2]<<8)|opcode[1])+1]=state->h;
+        state->pc += 2;
         break;
       case 0x23://INX H
         result=(state->h<<8)|(state->l&0xff)+1;
@@ -283,9 +285,10 @@ int Emulate8080Op(State8080* state){
         state->h=(uint8_t)result>>8;
         state->l=(uint8_t)result&0xFF;
         break;
-      case 0x2a://LDLD H
+      case 0x2a://LHLD H
         state->h=state->memory[opcode[2]];
         state->l=state->memory[opcode[1]];
+        state->pc += 2;
         break;
       case 0x2b://DCX H
         result=((state->h<<8)|state->l)-1;
@@ -324,6 +327,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x32://STA ADR;
         state->memory[(opcode[2]<<8)|opcode[1]]=state->a;
+        state->pc += 2;
         break;
       case 0x33://INX SP
         state->sp++;
@@ -360,6 +364,7 @@ int Emulate8080Op(State8080* state){
         break;
       case 0x3a://LDA ADR
         state->a=state->memory[(opcode[2]<<8)|opcode[1]];
+        state->pc += 2;
         break;
       case 0x3b://DCX SP
         state->sp--;
@@ -1441,7 +1446,7 @@ int Emulate8080Op(State8080* state){
         // state->memory[state->sp-1]=state->h;
         // state->sp=state->sp-2;
         break;
-      case 0xf6://OEI D8
+      case 0xf6://ORI D8
         result=state->a|opcode[1];
         state->a=(uint8_t)result;
         state->cc.z = ((state->a & 0xff) == 0);
@@ -1449,6 +1454,7 @@ int Emulate8080Op(State8080* state){
         state->cc.cy = (result > 0xff);
         state->cc.p = ~(state->a);
         //state->cc.ac =FIXME
+        state->pc += 1;
         break;
       case 0xf7://RST 6 (0x30)
         //function call:
@@ -1467,13 +1473,6 @@ int Emulate8080Op(State8080* state){
         if(state->cc.s) state->pc=(opcode[2]<<8)|opcode[1];
         break;
       case 0xfb://EI NOTE special
-        state->h=state->h+state->d;
-        state->d=state->h-state->d;
-        state->h=state->h-state->d;
-
-        state->l=state->l+state->e;
-        state->e=state->l-state->e;
-        state->l=state->l-state->e;
         break;
       case 0xfc://CM ADR
         if(state->cc.s){
@@ -1493,6 +1492,7 @@ int Emulate8080Op(State8080* state){
         state->cc.cy = (result > 0xff);
         state->cc.p = ~((uint8_t)result);
         //state->cc.ac =FIXME
+        state->pc += 1;
         break;
       case 0xff://RST 7 (38h)
         state->memory[state->sp-1]=state->pc>>8;
@@ -1529,7 +1529,7 @@ int main(void){
   curr_state.memory=buffer;
   printsate(&curr_state);
   int i=100;
-  while(i>0){
+  while(1){
     disassemble(buffer, curr_state.pc);
     Emulate8080Op(&curr_state);
     printsate(&curr_state);
