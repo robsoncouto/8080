@@ -1,9 +1,9 @@
 CC=gcc
-#CFLAGS=-lSDL
+CFLAGS=-lncurses
 PROJECT=main
 
 all: $(PROJECT).o
-	$(CC) -o $(PROJECT) $(PROJECT).c disassembler/8080disasm.c #$(CFLAGS)
+	$(CC) -o $(PROJECT) $(PROJECT).c disassembler/8080disasm.c window.c  $(CFLAGS)
 clean:
 	rm $(PROJECT).o $(PROJECT)
 #ex: example.o
