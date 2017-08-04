@@ -1585,7 +1585,7 @@ int main(void){
   while(1){
     disassemble(buffer, curr_state.pc);
     Emulate8080Op(&curr_state);
-    getchar();
+    //getchar();
     printsate(&curr_state);
     i--;
   }
