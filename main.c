@@ -7,9 +7,11 @@
 
 #define ret() state->pc = \
 (state->memory[state->sp+1]<<8)|(state->memory[state->sp]);\
-state->sp=state->sp+2;
+state->sp += 2;
+// printf("MEM:%02x ", state->memory[state->sp]);\
+// getchar();
 
-/* This code in an exercice from
+/* This code in an exercise from
 emulator101.com*/
 typedef struct ConditionCodes {
   uint8_t    z:1;
@@ -1183,7 +1185,7 @@ int Emulate8080Op(State8080* state){
           //fcall 0
           state->memory[state->sp-1]=state->pc>>8;
           state->memory[state->sp-2]=state->pc&0xff;
-          state->sp=state->sp+2;
+          state->sp=state->sp-2;
           state->pc=(opcode[2]<<8)|opcode[1];
         }
         break;
@@ -1206,7 +1208,7 @@ int Emulate8080Op(State8080* state){
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
-        state->sp=state->sp+2;
+        state->sp=state->sp-2;
         state->pc=0;
         break;
       case 0xc8://RZ
@@ -1229,7 +1231,7 @@ int Emulate8080Op(State8080* state){
           //fcall
           state->memory[state->sp-1]=state->pc>>8;
           state->memory[state->sp-2]=state->pc&0xff;
-          state->sp=state->sp+2;
+          state->sp=state->sp-2;
           state->pc=(opcode[2]<<8)|opcode[1];
         }
         break;
@@ -1237,7 +1239,7 @@ int Emulate8080Op(State8080* state){
         //fcall
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
-        state->sp=state->sp+2;
+        state->sp=state->sp-2;
         state->pc=(opcode[2]<<8)|opcode[1];
         break;
       case 0xce://ACI D8
@@ -1278,7 +1280,7 @@ int Emulate8080Op(State8080* state){
           //fcall 0
           state->memory[state->sp-1]=state->pc>>8;
           state->memory[state->sp-2]=state->pc&0xff;
-          state->sp=state->sp+2;
+          state->sp=state->sp-2;
           state->pc=(opcode[2]<<8)|opcode[1];
         }
         break;
@@ -1301,7 +1303,7 @@ int Emulate8080Op(State8080* state){
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
-        state->sp=state->sp+2;
+        state->sp=state->sp-2;
         state->pc=0x10;
         break;
       case 0xd8://RC
@@ -1323,7 +1325,7 @@ int Emulate8080Op(State8080* state){
           //fcall
           state->memory[state->sp-1]=state->pc>>8;
           state->memory[state->sp-2]=state->pc&0xff;
-          state->sp=state->sp+2;
+          state->sp=state->sp-2;
           state->pc=(opcode[2]<<8)|opcode[1];
         }
         break;
@@ -1369,7 +1371,7 @@ int Emulate8080Op(State8080* state){
           //fcall 0
           state->memory[state->sp-1]=state->pc>>8;
           state->memory[state->sp-2]=state->pc&0xff;
-          state->sp=state->sp+2;
+          state->sp=state->sp-2;
           state->pc=(opcode[2]<<8)|opcode[1];
         }
         break;
@@ -1392,7 +1394,7 @@ int Emulate8080Op(State8080* state){
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
-        state->sp=state->sp+2;
+        state->sp=state->sp-2;
         state->pc=0x20;
         break;
       case 0xe8://RPE
@@ -1422,7 +1424,7 @@ int Emulate8080Op(State8080* state){
           //fcall
           state->memory[state->sp-1]=state->pc>>8;
           state->memory[state->sp-2]=state->pc&0xff;
-          state->sp=state->sp+2;
+          state->sp=state->sp-2;
           state->pc=(opcode[2]<<8)|opcode[1];
         }
         break;
@@ -1468,7 +1470,7 @@ int Emulate8080Op(State8080* state){
           //fcall 0
           state->memory[state->sp-1]=state->pc>>8;
           state->memory[state->sp-2]=state->pc&0xff;
-          state->sp=state->sp+2;
+          state->sp=state->sp-2;
           state->pc=(opcode[2]<<8)|opcode[1];
         }
         break;
@@ -1491,7 +1493,7 @@ int Emulate8080Op(State8080* state){
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
-        state->sp=state->sp+2;
+        state->sp=state->sp-2;
         state->pc=0x30;
         break;
       case 0xf8://RM
@@ -1514,7 +1516,7 @@ int Emulate8080Op(State8080* state){
           //fcall
           state->memory[state->sp-1]=state->pc>>8;
           state->memory[state->sp-2]=state->pc&0xff;
-          state->sp=state->sp+2;
+          state->sp=state->sp-2;
           state->pc=(opcode[2]<<8)|opcode[1];
         }
         break;
