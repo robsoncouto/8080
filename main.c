@@ -7,9 +7,9 @@
 
 #define ret() state->pc = \
 (state->memory[state->sp+1]<<8)|(state->memory[state->sp]);\
-state->sp += 2;
-// printf("MEM:%02x ", state->memory[state->sp]);\
-// getchar();
+state->sp += 2;getchar();
+// printf("MEM:%02x ", state->memory[state->sp]);
+
 
 /* This code in an exercise from
 emulator101.com*/
@@ -1181,6 +1181,7 @@ int Emulate8080Op(State8080* state){
         state->pc=(opcode[2]<<8)|opcode[1];
         break;
       case 0xc4://CNZ ADR
+        state->pc+=2;
         if(!state->cc.z){
           //fcall 0
           state->memory[state->sp-1]=state->pc>>8;
@@ -1205,6 +1206,7 @@ int Emulate8080Op(State8080* state){
         state->pc += 1;
         break;
       case 0xc7://RST 0
+        state->pc+=2;
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
@@ -1227,6 +1229,7 @@ int Emulate8080Op(State8080* state){
       case 0xcb://Undefined
         break;
       case 0xcc://CZ ADR
+        state->pc+=2;
         if(state->cc.z){
           //fcall
           state->memory[state->sp-1]=state->pc>>8;
@@ -1236,6 +1239,7 @@ int Emulate8080Op(State8080* state){
         }
         break;
       case 0xcd://CALL ADR
+        state->pc+=2;
         //fcall
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
@@ -1276,6 +1280,7 @@ int Emulate8080Op(State8080* state){
       case 0xd3://OUT D8 NOTE special instruction
         break;
       case 0xd4://CNC ADR
+        state->pc+=2;
         if(!state->cc.cy){
           //fcall 0
           state->memory[state->sp-1]=state->pc>>8;
@@ -1300,6 +1305,7 @@ int Emulate8080Op(State8080* state){
         state->pc += 1;
         break;
       case 0xd7://RST 2 (0x10)
+        state->pc+=2;
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
@@ -1321,6 +1327,7 @@ int Emulate8080Op(State8080* state){
       case 0xdb://IN D8 NOTE special instruction
         break;
       case 0xdc://CC ADR
+        state->pc+=2;
         if(state->cc.cy){
           //fcall
           state->memory[state->sp-1]=state->pc>>8;
@@ -1367,6 +1374,7 @@ int Emulate8080Op(State8080* state){
         state->h=state->memory[state->sp+1];
         break;
       case 0xe4://CPO ADR
+        state->pc+=2;
         if(!state->cc.p){
           //fcall 0
           state->memory[state->sp-1]=state->pc>>8;
@@ -1391,6 +1399,7 @@ int Emulate8080Op(State8080* state){
         state->pc += 1;
         break;
       case 0xe7://RST 4 (0x20)
+        state->pc+=2;
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
@@ -1420,6 +1429,7 @@ int Emulate8080Op(State8080* state){
         state->l=state->l-state->e;
         break;
       case 0xec://CPE ADR
+        state->pc+=2;
         if(state->cc.p){
           //fcall
           state->memory[state->sp-1]=state->pc>>8;
@@ -1466,6 +1476,7 @@ int Emulate8080Op(State8080* state){
       case 0xf3://DI NOTE SPECIAL
         break;
       case 0xf4://CP ADR
+        state->pc+=2;
         if(!state->cc.s){
           //fcall 0
           state->memory[state->sp-1]=state->pc>>8;
@@ -1490,6 +1501,7 @@ int Emulate8080Op(State8080* state){
         state->pc += 1;
         break;
       case 0xf7://RST 6 (0x30)
+        state->pc+=2;
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
@@ -1512,6 +1524,7 @@ int Emulate8080Op(State8080* state){
       case 0xfb://EI NOTE special
         break;
       case 0xfc://CM ADR
+        state->pc+=2;
         if(state->cc.s){
           //fcall
           state->memory[state->sp-1]=state->pc>>8;
