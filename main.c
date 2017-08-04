@@ -3,9 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "disassembler/8080disasm.h"
+#include <curses.h>
+
 #define ret() state->pc = \
-(state->memory[state->sp+1]<<8)|(state->memory[state->sp])\
-;state->sp=state->sp+2;
+(state->memory[state->sp+1]<<8)|(state->memory[state->sp]);\
+state->sp=state->sp+2;
 
 /* This code in an exercice from
 emulator101.com*/
@@ -48,6 +50,7 @@ void printsate(State8080* state){
   printf("%02x ",state->l);
   printf("SP:%04x ",state->sp);
   printf("PC:%04x---",state->pc);
+  printf("M:%02x ",state->memory[((state->h)<<8)|(state->l)]);
   printf("Z:%d ",state->cc.z);
   printf("CY:%d ",state->cc.cy);
   printf("P:%d ",state->cc.p);
@@ -250,9 +253,9 @@ int Emulate8080Op(State8080* state){
         state->pc += 2;
         break;
       case 0x23://INX H
-        result=(state->h<<8)|(state->l&0xff)+1;
-        state->h=result&0xff;
-        state->l=result>>8;
+        result=(state->h<<8)|(state->l)+1;
+        state->h=result>>8;
+        state->l=result&0xff;
         break;
       case 0x24://INR H
         result=state->h+1;
@@ -1166,7 +1169,11 @@ int Emulate8080Op(State8080* state){
         state->sp=state->sp+2;
         break;
       case 0xc2://JNZ ADR
-        if(!state->cc.z) state->pc=(opcode[2]<<8)|opcode[1];
+        if(!state->cc.z){
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }else{
+          state->pc+=2;
+        }
         break;
       case 0xc3://JMP ADR
         state->pc=(opcode[2]<<8)|opcode[1];
@@ -1209,7 +1216,11 @@ int Emulate8080Op(State8080* state){
         ret();
         break;
       case 0xca://JZ ADR
-        if(state->cc.z==0) state->pc=(opcode[2]<<8)|opcode[1];
+        if(state->cc.z==0){
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }else{
+          state->pc+=2;
+        }
         break;
       case 0xcb://Undefined
         break;
@@ -1254,7 +1265,11 @@ int Emulate8080Op(State8080* state){
         state->sp=state->sp+2;
         break;
       case 0xd2://JNC ADR
-        if(!state->cc.cy) state->pc=(opcode[2]<<8)|opcode[1];
+        if(!state->cc.cy){
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }else{
+          state->pc+=2;
+        }
         break;
       case 0xd3://OUT D8 NOTE special instruction
         break;
@@ -1295,7 +1310,11 @@ int Emulate8080Op(State8080* state){
       case 0xd9://undefined
         break;
       case 0xda://JC ADR
-        if(state->cc.cy==0) state->pc=(opcode[2]<<8)|opcode[1];
+        if(state->cc.cy==0){
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }else{
+          state->pc+=2;
+        }
         break;
       case 0xdb://IN D8 NOTE special instruction
         break;
@@ -1335,7 +1354,11 @@ int Emulate8080Op(State8080* state){
         state->sp=state->sp+2;
         break;
       case 0xe2://JPO ADR
-        if(!state->cc.p) state->pc=(opcode[2]<<8)|opcode[1];
+        if(!state->cc.p){
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }else{
+          state->pc+=2;
+        }
         break;
       case 0xe3://XTHL
         state->l=state->memory[state->sp];
@@ -1379,7 +1402,11 @@ int Emulate8080Op(State8080* state){
         state->pc=(state->h<<8)|(state->l);
         break;
       case 0xea://JPE ADR
-        if(state->cc.p) state->pc=(opcode[2]<<8)|opcode[1];
+        if(state->cc.p){
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }else{
+          state->pc+=2;
+        }
         break;
       case 0xeb://XCHG exchanges H<->D and L<->E
         state->h=state->h+state->d;
@@ -1428,7 +1455,11 @@ int Emulate8080Op(State8080* state){
         // state->sp=state->sp+2;
         break;
       case 0xf2://JP ADR
-        if(!state->cc.s) state->pc=(opcode[2]<<8)|opcode[1];
+        if(!state->cc.s){
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }else{
+          state->pc+=2;
+        }
         break;
       case 0xf3://DI NOTE SPECIAL
         break;
@@ -1470,7 +1501,11 @@ int Emulate8080Op(State8080* state){
         state->sp=(state->h<<8)|(state->l);
         break;
       case 0xfa://JM ADR
-        if(state->cc.s) state->pc=(opcode[2]<<8)|opcode[1];
+        if(state->cc.s){
+          state->pc=(opcode[2]<<8)|opcode[1];
+        }else{
+          state->pc+=2;
+        }
         break;
       case 0xfb://EI NOTE special
         break;
@@ -1506,6 +1541,7 @@ int Emulate8080Op(State8080* state){
 }
 
 int main(void){
+  const int memorysize=0x43ff;
   State8080 curr_state;
   curr_state.pc=0;
 
@@ -1517,21 +1553,24 @@ int main(void){
     printf("\nFile not found\n");
     return 0;
   }
+
   fseek(file, 0, SEEK_END);
   filesize=ftell(file);
 
   printf("File size:%d\n",filesize );
-  uint8_t *buffer = (uint8_t *) malloc(filesize);
+  uint8_t *buffer = (uint8_t *) malloc(memorysize);
   fseek(file, 0, SEEK_SET);
   if (!fread(buffer, 1, filesize, file)==filesize){
     printf("Problem moving %d bytes to buffer\n",filesize );
   }
+
   curr_state.memory=buffer;
   printsate(&curr_state);
-  int i=100;
+  int i=30;
   while(1){
     disassemble(buffer, curr_state.pc);
     Emulate8080Op(&curr_state);
+    getchar();
     printsate(&curr_state);
     i--;
   }
