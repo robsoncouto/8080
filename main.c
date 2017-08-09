@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>//for getopt and [optind]
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
@@ -167,7 +168,8 @@ int Emulate8080Op(State8080* state){
         state->memory[(state->d<<8)|(state->e)]=state->a;
         break;
       case 0x13://INX D
-        result=(state->d<<8)|(state->e&0xff)+1;
+        result=(state->d<<8)|(state->e&0xff);
+        result++;
         state->e=result&0xff;
         state->d=result>>8;
         break;
@@ -255,7 +257,8 @@ int Emulate8080Op(State8080* state){
         state->pc += 2;
         break;
       case 0x23://INX H
-        result=(state->h<<8)|(state->l)+1;
+        result=(state->h<<8)|(state->l);
+        result++;
         state->h=result>>8;
         state->l=result&0xff;
         break;
@@ -342,14 +345,14 @@ int Emulate8080Op(State8080* state){
         state->cc.z=(state->memory[(state->h<<8)|(state->l)]&0xff);
         state->cc.s=(state->memory[(state->h<<8)|(state->l)]&0x80);
         state->cc.p=~(state->memory[(state->h<<8)|(state->l)]&0x01);
-        state->cc.ac=0;//FIXME
+        //state->cc.ac=0;//FIXME
         break;
       case 0x35://DCR M
         state->memory[(state->h<<8)|(state->l)]-1;
         state->cc.z=(state->memory[(state->h<<8)|(state->l)]&0xff);
         state->cc.s=(state->memory[(state->h<<8)|(state->l)]&0x80);
         state->cc.p=~(state->memory[(state->h<<8)|(state->l)]&0x01);
-        state->cc.ac=0;//FIXME
+        //state->cc.ac=0;//FIXME
         break;
       case 0x36://MVI H, D8
         state->memory[(state->h<<8)|(state->l)]=opcode[1];
@@ -1206,7 +1209,6 @@ int Emulate8080Op(State8080* state){
         state->pc += 1;
         break;
       case 0xc7://RST 0
-        state->pc+=2;
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
@@ -1305,7 +1307,6 @@ int Emulate8080Op(State8080* state){
         state->pc += 1;
         break;
       case 0xd7://RST 2 (0x10)
-        state->pc+=2;
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
@@ -1399,7 +1400,6 @@ int Emulate8080Op(State8080* state){
         state->pc += 1;
         break;
       case 0xe7://RST 4 (0x20)
-        state->pc+=2;
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
@@ -1462,9 +1462,14 @@ int Emulate8080Op(State8080* state){
         if(!state->cc.s) ret();
         break;
       case 0xf1://POP PSW FIXME
-        // state->l=state->memory[state->sp];
-        // state->h=state->memory[state->sp+1];
-        // state->sp=state->sp+2;
+        state->a = state->memory[state->sp+1];
+        uint8_t popped_psw = state->memory[state->sp];
+        state->cc.z  = (0x01 == (popped_psw & 0x01));
+        state->cc.s  = (0x02 == (popped_psw & 0x02));
+        state->cc.p  = (0x04 == (popped_psw & 0x04));
+        state->cc.cy = (0x05 == (popped_psw & 0x08));
+        state->cc.ac = (0x10 == (popped_psw & 0x10));
+        state->sp += 2;
         break;
       case 0xf2://JP ADR
         if(!state->cc.s){
@@ -1486,9 +1491,14 @@ int Emulate8080Op(State8080* state){
         }
         break;
       case 0xf5://PUSH PSW FIXME
-        // state->memory[state->sp-2]=state->l;
-        // state->memory[state->sp-1]=state->h;
-        // state->sp=state->sp-2;
+        state->memory[state->sp-1] = state->a;
+            uint8_t psw = (state->cc.z |
+                            state->cc.s << 1 |
+                            state->cc.p << 2 |
+                            state->cc.cy << 3 |
+                            state->cc.ac << 4 );
+            state->memory[state->sp-2] = psw;
+            state->sp = state->sp - 2;
         break;
       case 0xf6://ORI D8
         result=state->a|opcode[1];
@@ -1501,7 +1511,6 @@ int Emulate8080Op(State8080* state){
         state->pc += 1;
         break;
       case 0xf7://RST 6 (0x30)
-        state->pc+=2;
         //function call:
         state->memory[state->sp-1]=state->pc>>8;
         state->memory[state->sp-2]=state->pc&0xff;
@@ -1555,10 +1564,25 @@ int Emulate8080Op(State8080* state){
   //state->pc+=1;  //for the opcode
 }
 
-int main(void){
-  const int memorysize=0x43ff;
+int main(int argc, char *argv[]){
+  int memorysize=0x43ff;
   State8080 curr_state;
   curr_state.pc=0;
+  int opt;
+  while ((opt = getopt(argc, argv, "mp")) != -1) {
+    switch (opt) {
+    case 'p':
+      curr_state.pc = strtol(argv[optind], NULL, 16);
+      //printf("PC: %s\n", argv[optind]);
+    case 'm':
+      memorysize= atoi(argv[optind]);
+      break;
+    default:
+      //usage(args, argv[0]);
+      //exit(-1);
+      printf("No custom args given\n");
+    }
+  }
 
   FILE *file;
   file=fopen("invaders.bin", "rb");
