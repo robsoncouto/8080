@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <stdlib.h>
+#include <string.h>
 #include "8080disasm.h"
 
 int main(void){
@@ -27,8 +28,11 @@ int main(void){
   }
 
   uint32_t pc=0;
+  uint8_t str[50];
   while (pc<filesize) {
-    pc+= disassemble(buffer,pc);
+    memset(str,0,50);
+    pc+= disassemble(buffer,pc,str);
+    printf("%s\n",str);
   }
   fclose(file);
 }
